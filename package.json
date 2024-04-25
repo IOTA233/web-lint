@@ -1,0 +1,61 @@
+{
+  "name": "@zhdgps/web-lint",
+  "private": false,
+  "version": "1.0.0",
+  "publishConfig": {
+    "access": "public",
+    "registry": "http://172.16.36.8:8081/repository/npm-hosted/"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "clear": "rimraf pnpm-lock.yarm & rimraf node_modules & rimraf .eslintrc.js & rimraf .eslintignore & rimraf .stylelintrc.json & rimraf .stylelintignore & rimraf .prettierrc.js & rimraf .prettierignore & rimraf .commitlintrc.js & rimraf .lintstagedrc.js & rimraf .husky & rimraf .vscode/settings.json & rimraf pnpm-lock.yaml",
+    "lint:style": "stylelint --fix ./**/*.{css,scss,vue,html}",
+    "lint:script": "eslint --ext .js,.jsx,.ts,.tsx,.vue --fix ./",
+    "prepare": "husky"
+  },
+  "bin": {
+    "web-lint": "./dist/index.js"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.2.1",
+    "@commitlint/config-conventional": "^19.1.0",
+    "@types/cross-spawn": "^6.0.2",
+    "@types/fs-extra": "^9.0.13",
+    "@types/node": "^20.12.7",
+    "typescript": "^5.2.2",
+    "prettier": "^3.2.5",
+    "pretty-quick": "4.0.0",
+    "husky": "^9.0.1",
+    "lint-staged": "^15.2.2",
+    "stylelint": "^16.3.1",
+    "stylelint-config-recess-order": "^5.0.0",
+    "stylelint-config-recommended-vue": "^1.5.0",
+    "stylelint-config-standard-scss": "^13.1.0",
+    "@stylistic/stylelint-plugin": "^2.1.1",
+    "@typescript-eslint/eslint-plugin": "^7.6.0",
+    "@typescript-eslint/parser": "^7.6.0",
+    "eslint": "^8.0.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^18.0.0",
+    "eslint-define-config": "^2.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "vue-eslint-parser": "^9.4.2",
+    "eslint-plugin-vue": "^9.24.1"
+  },
+  "dependencies": {
+    "cac": "^6.7.12",
+    "chalk": "^4.0.1",
+    "cross-spawn": "^7.0.3",
+    "enquirer": "^2.4.1",
+    "fs-extra": "^10.1.0",
+    "load-json-file": "^7.0.1"
+  },
+  "engines": {
+    "node": ">=18.12.0"
+  }
+}
