@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
 import { removeDevDependencies, writeInPkg } from '../utils/tool'
-import { getStylelintConfig } from '../config/stylelintrc'
+import { getStylelintConfig } from '../cli/config/stylelintrc'
 import { getpath } from '../utils/path'
 import { getPackageJson } from '../utils/env'
 

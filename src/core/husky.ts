@@ -2,8 +2,8 @@ import fs from 'fs-extra'
 import { writeInPkg, run } from '../utils/tool'
 import { getpath } from '../utils/path'
 import { pathExists, checkPackageManage } from '../utils/check'
-import { getLintstageConfig } from '../config/lintstagedrc'
-import { getPreCommitConfig } from '../config/commitlintrc'
+import { getLintstageConfig } from '../cli/config/lintstagedrc'
+import { getPreCommitConfig } from '../cli/config/commitlintrc'
 import { getPackageJson } from '../utils/env'
 
 // 需要安装的依赖

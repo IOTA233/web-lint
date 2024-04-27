@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
 import { writeInPkg } from '../utils/tool'
-import { getPrettierConfig } from '../config/prettierrc'
+import { getPrettierConfig } from '../cli/config/prettierrc'
 import { getpath } from '../utils/path'
 
 const baseDep = [
