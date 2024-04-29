@@ -6,14 +6,16 @@ import * as p from '@clack/prompts'
 import { run } from './run'
 import { pkgJson } from './constants'
 
+const pkgName = '@zhdgps/web-lint'
+
 function header() {
   // eslint-disable-next-line no-console
   console.log('\n')
-  p.intro(`${c.green('@zhdgps/web-lint ')}${c.dim(`v${pkgJson.version}`)}`)
+  p.intro(`${c.green(pkgName)}${c.dim(`v${pkgJson.version}`)}`)
 }
 
 const instance = yargs(hideBin(process.argv))
-  .scriptName('@zhdgps/web-lint')
+  .scriptName(pkgName)
   .usage('')
   .command(
     '*',
@@ -53,6 +55,9 @@ const instance = yargs(hideBin(process.argv))
   .alias('v', 'version')
 
 // eslint-disable-next-line no-unused-expressions
-instance
+const cliInit = () => {
+  instance
   .help()
   .argv
+}
+export default cliInit

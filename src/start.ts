@@ -20,7 +20,7 @@ export const start = async (packages: Array<string>) => {
     if (packages.includes('prettier')) {
       await prettierInit()
     }
-    if (packages.includes('husky')) {
+    if (packages.includes('commitlint')) {
       await huskyInit()
     }
     await vscodeInit()

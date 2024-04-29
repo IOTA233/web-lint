@@ -11,9 +11,10 @@ import { isGitClean } from './utils'
 import type {
   ToolOption, PromItem, PromtResult,
 } from './types'
-import { updatePackageJson } from './stages/update-package-json'
-import { updateEslintFiles } from './stages/update-eslint-files'
-import { updateVscodeSettings } from './stages/update-vscode-settings'
+// import { updatePackageJson } from './stages/update-package-json'
+// import { updateEslintFiles } from './stages/update-eslint-files'
+// import { updateVscodeSettings } from './stages/update-vscode-settings'
+import { start } from '../start'
 
 export interface CliRunOptions {
   /**
@@ -64,7 +65,8 @@ export async function run(options: CliRunOptions = {}) {
         return p.multiselect<PromItem<ToolOption>[], ToolOption>({
           message: c.reset(message),
           options: toolOptions,
-          required: false,
+          initialValues: ['eslint', 'stylelint', 'prettier', 'commitlint'],
+          required: true,
         })
       },
 
@@ -85,10 +87,10 @@ export async function run(options: CliRunOptions = {}) {
 
     if (!result.uncommittedConfirmed) return process.exit(1)
   }
-
-  await updatePackageJson(result)
-  await updateEslintFiles(result)
-  await updateVscodeSettings(result)
+  await start(result.tools)
+  // await updatePackageJson(result)
+  // await updateEslintFiles(result)
+  // await updateVscodeSettings(result)
 
   p.log.success(c.green('配置完成，请进行依赖包的更新！'))
 }

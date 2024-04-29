@@ -1,6 +1,6 @@
 import c from 'picocolors'
 import pkgJson from '../../package.json'
-import type { ExtraLibrariesOption, ToolOption, PromItem } from './types'
+import type { ToolOption, PromItem } from './types'
 
 export { pkgJson }
 

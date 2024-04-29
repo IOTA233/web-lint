@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import { removeDevDependencies, writeInPkg } from '../utils/tool'
 import { getPackageJson } from '../utils/env'
-import { getEslintConfigContent } from '../cli/config/eslintrc'
+import { eslintConfigContent } from '../cli/config/eslintrc'
 import { getpath } from '../utils/path'
 
 const baseDep = [
@@ -42,5 +42,5 @@ export const eslintInit = async () => {
   // writeInPkg 把依赖写入到package中
   await writeInPkg(baseDep, 'devDependencies', pkgJson)
   fs.writeJsonSync(getpath('package.json'), pkgJson, { spaces: 2 })
-  fs.outputFileSync(getpath('./.eslintrc.js'), getEslintConfigContent)
+  fs.outputFileSync(getpath('./.eslintrc.js'), eslintConfigContent)
 }

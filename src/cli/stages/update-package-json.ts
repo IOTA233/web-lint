@@ -5,7 +5,7 @@ import c from 'picocolors'
 import * as p from '@clack/prompts'
 
 import { dependenciesMap, pkgJson } from '../constants'
-import type { ExtraLibrariesOption, PromtResult } from '../types'
+import type { PromtResult } from '../types'
 
 export async function updatePackageJson(result: PromtResult) {
   const cwd = process.cwd()
@@ -24,38 +24,11 @@ export async function updatePackageJson(result: PromtResult) {
     .replace(/-\d+$/, '')
 
   const addedPackages: string[] = []
-
-  if (result.extra.length) {
-    result.extra.forEach((item: ExtraLibrariesOption) => {
-      switch (item) {
-        case 'formatter':
-          (<const>[
-            'eslint-plugin-format',
-            result.tools.includes('astro') ? 'prettier-plugin-astro' : null,
-          ]).forEach((f) => {
-            if (!f)
-              return
-            pkg.devDependencies[f] = pkgJson.devDependencies[f]
-            addedPackages.push(f)
-          })
-          break
-        case 'unocss':
-          (<const>[
-            '@unocss/eslint-plugin',
-          ]).forEach((f) => {
-            pkg.devDependencies[f] = pkgJson.devDependencies[f]
-            addedPackages.push(f)
-          })
-          break
-      }
-    })
-  }
-
   for (const framework of result.tools) {
     const deps = dependenciesMap[framework]
     if (deps) {
       deps.forEach((f) => {
-        pkg.devDependencies[f] = pkgJson.devDependencies[f]
+        // pkg.devDependencies[f] = pkgJson.devDependencies[f]
         addedPackages.push(f)
       })
     }

@@ -1,4 +1,4 @@
 #!/usr/bin/env node
-import cliInit from './cli'
+import cliInit from './cli/index'
 
 cliInit()
