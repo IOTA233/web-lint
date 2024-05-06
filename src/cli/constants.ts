@@ -1,6 +1,6 @@
 import c from 'picocolors'
 import pkgJson from '../../package.json'
-import type { ToolOption, PromItem } from './types'
+import type { LintOption, PromItem } from './types'
 
 export { pkgJson }
 
@@ -49,7 +49,7 @@ export const vscodeSettingsString = `
   ]
 `
 
-export const toolOptions: PromItem<ToolOption>[] = [
+export const lintOptions: PromItem<LintOption>[] = [
   {
     label: c.green('Eslint'),
     value: 'eslint',
@@ -68,7 +68,7 @@ export const toolOptions: PromItem<ToolOption>[] = [
   },
 ]
 
-export const tools: ToolOption[] = toolOptions.map(({ value }) => (value))
+export const lints: LintOption[] = lintOptions.map(({ value }) => (value))
 
 export const dependenciesMap = {
   eslint: [

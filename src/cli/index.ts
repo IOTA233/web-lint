@@ -23,19 +23,8 @@ const instance = yargs(hideBin(process.argv))
     (args) => args
       .option('yes', {
         alias: 'y',
-        description: 'Skip prompts and use default values',
+        description: '默认全量安装',
         type: 'boolean',
-      })
-      .option('template', {
-        alias: 't',
-        description: 'Use the framework template for optimal customization: vue / react / svelte / astro',
-        type: 'string',
-      })
-      .option('extra', {
-        alias: 'e',
-        array: true,
-        description: 'Use the extra utils: formatter / perfectionist / unocss',
-        type: 'string',
       })
       .help(),
     async (args) => {
@@ -54,7 +43,6 @@ const instance = yargs(hideBin(process.argv))
   .version('version', pkgJson.version)
   .alias('v', 'version')
 
-// eslint-disable-next-line no-unused-expressions
 const cliInit = () => {
   instance
   .help()

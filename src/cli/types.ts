@@ -4,10 +4,10 @@ export interface PromItem<T> {
   hint?: string
 }
 
-export type ToolOption = 'eslint' | 'stylelint' | 'prettier' | 'commitlint'
+export type LintOption = 'eslint' | 'stylelint' | 'prettier' | 'commitlint'
 
 export interface PromtResult {
   uncommittedConfirmed: boolean
-  tools: ToolOption[]
+  lints: LintOption[]
   updateVscodeSettings: unknown
 }

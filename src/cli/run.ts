@@ -5,11 +5,11 @@ import c from 'picocolors'
 import * as p from '@clack/prompts'
 
 import {
-  toolOptions, tools,
+  lintOptions, lints,
 } from './constants'
 import { isGitClean } from './utils'
 import type {
-  ToolOption, PromItem, PromtResult,
+  LintOption, PromItem, PromtResult,
 } from './types'
 // import { updatePackageJson } from './stages/update-package-json'
 // import { updateEslintFiles } from './stages/update-eslint-files'
@@ -24,12 +24,11 @@ export interface CliRunOptions {
   /**
    * Use the framework template for optimal customization: vue / react / svelte / astro
    */
-  tools?: string[]
+  lints?: string[]
 }
 
 export async function run(options: CliRunOptions = {}) {
   const argSkipPrompt = !!process.env.SKIP_PROMPT || options.yes
-  const argTemplate = <ToolOption[]>options.tools?.map((m) => m.trim())
 
   if (fs.existsSync(path.join(process.cwd(), 'eslint.config.js'))) {
     p.log.warn(c.yellow('eslint.config.js already exists, migration wizard exited.'))
@@ -38,7 +37,7 @@ export async function run(options: CliRunOptions = {}) {
 
   // Set default value for promtResult if `argSkipPromt` is enabled
   let result: PromtResult = {
-    tools: argTemplate ?? [],
+    lints: [],
     uncommittedConfirmed: false,
     updateVscodeSettings: true,
   }
@@ -53,25 +52,23 @@ export async function run(options: CliRunOptions = {}) {
           message: '监测到尚未提交的代码，是否确认继续执行？',
         })
       },
-      tools: ({ results }) => {
-        const isArgTemplateValid = typeof argTemplate === 'string' && !!tools.includes(<ToolOption>argTemplate)
+      lints: ({ results }) => {
 
-        if (!results.uncommittedConfirmed || isArgTemplateValid) return Promise.resolve(null)
+        if (!results.uncommittedConfirmed) return Promise.resolve(false)
 
-        const message = !isArgTemplateValid && argTemplate ?
-          `"${argTemplate}" 属于错误的模板. 请在下方选择: ` :
+        const message = 
           '选择需要安装的lint工具:'
 
-        return p.multiselect<PromItem<ToolOption>[], ToolOption>({
+        return p.multiselect<PromItem<LintOption>[], LintOption>({
           message: c.reset(message),
-          options: toolOptions,
+          options: lintOptions,
           initialValues: ['eslint', 'stylelint', 'prettier', 'commitlint'],
           required: true,
         })
       },
 
       updateVscodeSettings: ({ results }) => {
-        if (!results.uncommittedConfirmed) return Promise.resolve(null)
+        if (!results.uncommittedConfirmed || !result.lints) return Promise.resolve(false)
 
         return p.confirm({
           initialValue: true,
@@ -87,7 +84,7 @@ export async function run(options: CliRunOptions = {}) {
 
     if (!result.uncommittedConfirmed) return process.exit(1)
   }
-  await start(result.tools)
+  await start(result.lints)
   // await updatePackageJson(result)
   // await updateEslintFiles(result)
   // await updateVscodeSettings(result)

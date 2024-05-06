@@ -24,11 +24,11 @@ export async function updatePackageJson(result: PromtResult) {
     .replace(/-\d+$/, '')
 
   const addedPackages: string[] = []
-  for (const framework of result.tools) {
-    const deps = dependenciesMap[framework]
+  for (const lint of result.lints) {
+    const deps = dependenciesMap[lint]
     if (deps) {
       deps.forEach((f) => {
-        // pkg.devDependencies[f] = pkgJson.devDependencies[f]
+        pkg.devDependencies[f] = pkgJson.devDependencies[f]
         addedPackages.push(f)
       })
     }
