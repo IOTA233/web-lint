@@ -94,6 +94,7 @@ module.exports = defineConfig({
     radix: ['error', 'as-needed'],
 
     '@typescript-eslint/no-unused-expressions': 'off',
+    'no-restricted-syntax': 'off',
   },
 
   // 文件级别的重写
@@ -112,4 +113,12 @@ module.exports = defineConfig({
     },
   ],
 })
+`
+
+export const eslintIgnoreContent = `node_modules
+dist
+!.eslintrc.js
+!.stylelintrc.js
+!.lintstagedrc.js
+!.commitlintrc.js
 `

@@ -1,9 +1,8 @@
-import fs from 'node:fs'
-import path from 'node:path'
 import process from 'node:process'
 import c from 'picocolors'
 import * as p from '@clack/prompts'
 
+import { detectPackageManager } from '@antfu/install-pkg'
 import {
   lintOptions, lints,
 } from './constants'
@@ -11,10 +10,9 @@ import { isGitClean } from './utils'
 import type {
   LintOption, PromItem, PromtResult,
 } from './types'
-// import { updatePackageJson } from './stages/update-package-json'
-// import { updateEslintFiles } from './stages/update-eslint-files'
-// import { updateVscodeSettings } from './stages/update-vscode-settings'
-import { start } from '../start'
+import { updatePackageJson } from './stages/update-package-json'
+import { updateLintFiles } from './stages/update-lint-files'
+import { updateVscodeSettings } from './stages/update-vscode-settings'
 
 export interface CliRunOptions {
   /**
@@ -30,51 +28,45 @@ export interface CliRunOptions {
 export async function run(options: CliRunOptions = {}) {
   const argSkipPrompt = !!process.env.SKIP_PROMPT || options.yes
 
-  if (fs.existsSync(path.join(process.cwd(), 'eslint.config.js'))) {
-    p.log.warn(c.yellow('eslint.config.js already exists, migration wizard exited.'))
-    return process.exit(1)
-  }
-
-  // Set default value for promtResult if `argSkipPromt` is enabled
+  // 如果指令为默认安装，则按照以下默认配置进行安装
   let result: PromtResult = {
-    lints: [],
+    lints,
     uncommittedConfirmed: false,
-    updateVscodeSettings: true,
+    vscodeConfirmed: true,
+    ignoreFileConfirmed: false,
   }
 
   if (!argSkipPrompt) {
     result = await p.group({
       uncommittedConfirmed: () => {
-        if (argSkipPrompt || isGitClean()) return Promise.resolve(true)
+        if (isGitClean()) return Promise.resolve(true)
 
         return p.confirm({
           initialValue: false,
           message: '监测到尚未提交的代码，是否确认继续执行？',
         })
       },
-      lints: ({ results }) => {
-
-        if (!results.uncommittedConfirmed) return Promise.resolve(false)
-
-        const message = 
+      lints: () => {
+        const message =
           '选择需要安装的lint工具:'
 
         return p.multiselect<PromItem<LintOption>[], LintOption>({
           message: c.reset(message),
           options: lintOptions,
-          initialValues: ['eslint', 'stylelint', 'prettier', 'commitlint'],
+          initialValues: lints,
           required: true,
         })
       },
 
-      updateVscodeSettings: ({ results }) => {
-        if (!results.uncommittedConfirmed || !result.lints) return Promise.resolve(false)
+      ignoreFileConfirmed: () => p.confirm({
+        initialValue: false,
+        message: '是否需要创建 .ignore 文件？',
+      }),
 
-        return p.confirm({
-          initialValue: true,
-          message: '替换 .vscode/settings.json 以获得更好的开发体验！',
-        })
-      },
+      vscodeConfirmed: () => p.confirm({
+        initialValue: true,
+        message: '替换 .vscode/settings.json 以获得更好的开发体验！',
+      }),
     }, {
       onCancel: () => {
         p.cancel('任务取消！')
@@ -84,10 +76,12 @@ export async function run(options: CliRunOptions = {}) {
 
     if (!result.uncommittedConfirmed) return process.exit(1)
   }
-  await start(result.lints)
-  // await updatePackageJson(result)
-  // await updateEslintFiles(result)
-  // await updateVscodeSettings(result)
+  await updatePackageJson(result)
+  await updateLintFiles(result)
+  await updateVscodeSettings(result)
 
-  p.log.success(c.green('配置完成，请进行依赖包的更新！'))
+  const manager = await detectPackageManager()
+  p.log.success(c.green(`配置完成，执行 ${manager} run install 更新依赖包\n`))
+
+  return process.exit(0)
 }

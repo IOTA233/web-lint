@@ -94,6 +94,7 @@ module.exports = defineConfig({
     radix: ['error', 'as-needed'],
 
     '@typescript-eslint/no-unused-expressions': 'off',
+    'no-restricted-syntax': 'off',
   },
 
   // 文件级别的重写

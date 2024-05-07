@@ -1,53 +1,15 @@
 import c from 'picocolors'
 import pkgJson from '../../package.json'
 import type { LintOption, PromItem } from './types'
+import {
+  lintstageConfigContent, commitlintConfigContent, hooksContent, vscodeContent, eslintConfigContent,
+  eslintIgnoreContent, stylelintConfigContent, stylelintIgnoreContent,
+  prettierConfigContent, prettierIgnoreContent,
+} from './config/index'
 
 export { pkgJson }
 
-export const vscodeSettingsString = `
-  // Enable the ESlint flat config support
-  "eslint.experimental.useFlatConfig": true,
-
-  // Disable the default formatter, use eslint instead
-  "prettier.enable": false,
-  "editor.formatOnSave": false,
-
-  // Auto fix
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
-    "source.organizeImports": "never"
-  },
-
-  // Silent the stylistic rules in you IDE, but still auto fix them
-  "eslint.rules.customizations": [
-    { "rule": "style/*", "severity": "off" },
-    { "rule": "format/*", "severity": "off" },
-    { "rule": "*-indent", "severity": "off" },
-    { "rule": "*-spacing", "severity": "off" },
-    { "rule": "*-spaces", "severity": "off" },
-    { "rule": "*-order", "severity": "off" },
-    { "rule": "*-dangle", "severity": "off" },
-    { "rule": "*-newline", "severity": "off" },
-    { "rule": "*quotes", "severity": "off" },
-    { "rule": "*semi", "severity": "off" }
-  ],
-
-  // Enable eslint for all supported languages
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact",
-    "vue",
-    "html",
-    "markdown",
-    "json",
-    "jsonc",
-    "yaml",
-    "toml",
-    "astro",
-  ]
-`
+export const vscodeSettingsString = vscodeContent
 
 export const lintOptions: PromItem<LintOption>[] = [
   {
@@ -97,5 +59,68 @@ export const dependenciesMap = {
     'lint-staged',
     '@commitlint/cli',
     '@commitlint/config-conventional',
+  ],
+} as const
+
+export const scriptsMap = {
+  eslint: [
+    { 'lint:script': 'eslint --ext .js,.jsx,.ts,.tsx,.vue --fix ./' },
+  ],
+  stylelint: [
+    { 'lint:style': 'stylelint --fix ./**/*.{css,scss,vue,html}' },
+  ],
+  prettier: [
+  ],
+  commitlint: [
+  ],
+} as const
+
+export const configsMap = {
+  eslint: [
+    {
+      config: eslintConfigContent,
+      file: '.eslintrc.js',
+    },
+    {
+      config: eslintIgnoreContent,
+      type: 'ignoreFile',
+      file: '.eslintignore',
+    },
+  ],
+  stylelint: [
+    {
+      config: stylelintConfigContent,
+      file: '.stylelintrc.json',
+    },
+    {
+      config: stylelintIgnoreContent,
+      type: 'ignoreFile',
+      file: '.stylelintignore',
+    },
+  ],
+  prettier: [
+    {
+      config: prettierConfigContent,
+      file: '.prettierrc.js',
+    },
+    {
+      config: prettierIgnoreContent,
+      type: 'ignoreFile',
+      file: '.prettierignore',
+    },
+  ],
+  commitlint: [
+    {
+      config: commitlintConfigContent,
+      file: '.commitlintrc.js',
+    },
+    {
+      config: lintstageConfigContent,
+      file: '.lintstagedrc.js',
+    },
+    {
+      config: hooksContent,
+      file: '.simple-git-hooks.json',
+    },
   ],
 } as const

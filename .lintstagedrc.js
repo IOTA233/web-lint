@@ -1,4 +1,4 @@
-export const lintstageConfigContent = `module.exports = {
+module.exports = {
   // 对于 js、ts 脚本文件，应用 eslint
   '**/*.{js,jsx,tsx,ts}': [
     'eslint --fix',
@@ -13,4 +13,3 @@ export const lintstageConfigContent = `module.exports = {
     'stylelint --fix',
   ],
 }
-`

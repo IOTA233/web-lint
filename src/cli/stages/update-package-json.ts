@@ -4,7 +4,7 @@ import process from 'node:process'
 import c from 'picocolors'
 import * as p from '@clack/prompts'
 
-import { dependenciesMap, pkgJson } from '../constants'
+import { dependenciesMap, scriptsMap, pkgJson } from '../constants'
 import type { PromtResult } from '../types'
 
 export async function updatePackageJson(result: PromtResult) {
@@ -12,19 +12,27 @@ export async function updatePackageJson(result: PromtResult) {
 
   const pathPackageJSON = path.join(cwd, 'package.json')
 
-  p.log.step(c.cyan(`Bumping @antfu/eslint-config to v${pkgJson.version}`))
+  p.log.success(c.cyan('更新 package.json'))
 
   const pkgContent = await fsp.readFile(pathPackageJSON, 'utf-8')
   const pkg: Record<string, any> = JSON.parse(pkgContent)
 
   pkg.devDependencies ??= {}
-  pkg.devDependencies['@antfu/eslint-config'] = `^${pkgJson.version}`
-  pkg.devDependencies.eslint ??= pkgJson.devDependencies.eslint
-    .replace('npm:eslint-ts-patch@', '')
-    .replace(/-\d+$/, '')
 
+  const addedScripts: string[] = []
   const addedPackages: string[] = []
   for (const lint of result.lints) {
+    const script = scriptsMap[lint]
+    if (script) {
+      script.forEach((f: { [key: string]: any }) => {
+        for (const key in f) {
+          if (Object.prototype.hasOwnProperty.call(f, key)) {
+            pkg.scripts[key] = f[key]
+            addedScripts.push(`${key}: ${f[key]}`)
+          }
+        }
+      })
+    }
     const deps = dependenciesMap[lint]
     if (deps) {
       deps.forEach((f) => {
@@ -34,9 +42,12 @@ export async function updatePackageJson(result: PromtResult) {
     }
   }
 
-  if (addedPackages.length)
-    p.note(`${c.dim(addedPackages.join(', '))}`, 'Added packages')
+  if (addedScripts.length) {
+    p.note(`${c.dim(addedScripts.join('\n'))}`, 'Added scripts')
+  }
+  if (addedPackages.length) {
+    p.note(`${c.dim(addedPackages.join('\n'))}`, 'Added packages')
+  }
 
   await fsp.writeFile(pathPackageJSON, JSON.stringify(pkg, null, 2))
-  p.log.success(c.green(`Changes wrote to package.json`))
 }

@@ -11,27 +11,24 @@ import type { PromtResult } from '../types'
 export async function updateVscodeSettings(result: PromtResult) {
   const cwd = process.cwd()
 
-  if (!result.updateVscodeSettings)
-    return
+  if (result.vscodeConfirmed) {
+    const dotVscodePath: string = path.join(cwd, '.vscode')
+    const settingsPath: string = path.join(dotVscodePath, 'settings.json')
 
-  const dotVscodePath: string = path.join(cwd, '.vscode')
-  const settingsPath: string = path.join(dotVscodePath, 'settings.json')
+    if (!fs.existsSync(dotVscodePath)) await fsp.mkdir(dotVscodePath, { recursive: true })
 
-  if (!fs.existsSync(dotVscodePath))
-    await fsp.mkdir(dotVscodePath, { recursive: true })
+    if (!fs.existsSync(settingsPath)) {
+      await fsp.writeFile(settingsPath, `{${vscodeSettingsString}}\n`, 'utf-8')
+      p.log.success(c.green('创建 .vscode/settings.json'))
+    } else {
+      let settingsContent = await fsp.readFile(settingsPath, 'utf8')
 
-  if (!fs.existsSync(settingsPath)) {
-    await fsp.writeFile(settingsPath, `{${vscodeSettingsString}}\n`, 'utf-8')
-    p.log.success(c.green(`Created .vscode/settings.json`))
-  }
-  else {
-    let settingsContent = await fsp.readFile(settingsPath, 'utf8')
+      settingsContent = settingsContent.trim().replace(/\s*}$/, '')
+      settingsContent += settingsContent.endsWith(',') || settingsContent.endsWith('{') ? '' : ','
+      settingsContent += `${vscodeSettingsString}}\n`
 
-    settingsContent = settingsContent.trim().replace(/\s*}$/, '')
-    settingsContent += settingsContent.endsWith(',') || settingsContent.endsWith('{') ? '' : ','
-    settingsContent += `${vscodeSettingsString}}\n`
-
-    await fsp.writeFile(settingsPath, settingsContent, 'utf-8')
-    p.log.success(c.green(`Updated .vscode/settings.json`))
+      await fsp.writeFile(settingsPath, settingsContent, 'utf-8')
+      p.log.success(c.green('更新 .vscode/settings.json'))
+    }
   }
 }

@@ -11,7 +11,7 @@ const pkgName = '@zhdgps/web-lint'
 function header() {
   // eslint-disable-next-line no-console
   console.log('\n')
-  p.intro(`${c.green(pkgName)}${c.dim(`v${pkgJson.version}`)}`)
+  p.intro(`${c.green(pkgName)}: ${c.dim(`v${pkgJson.version}`)}`)
 }
 
 const instance = yargs(hideBin(process.argv))
@@ -45,7 +45,7 @@ const instance = yargs(hideBin(process.argv))
 
 const cliInit = () => {
   instance
-  .help()
-  .argv
+    .help()
+    .argv
 }
 export default cliInit

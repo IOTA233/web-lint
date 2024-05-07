@@ -9,5 +9,6 @@ export type LintOption = 'eslint' | 'stylelint' | 'prettier' | 'commitlint'
 export interface PromtResult {
   uncommittedConfirmed: boolean
   lints: LintOption[]
-  updateVscodeSettings: unknown
+  vscodeConfirmed: unknown
+  ignoreFileConfirmed: boolean
 }

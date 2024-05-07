@@ -64,7 +64,7 @@
   },
   "include": [
     "src/**/*.ts",
-    "vite.config.js",
+    "tsup.config.ts",
     ".*.*"
   ],
 }
