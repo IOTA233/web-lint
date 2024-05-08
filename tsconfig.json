@@ -3,7 +3,7 @@
     /* 访问 https://aka.ms/tsconfig.json 查看更多 */
     /* 基本选项 */
     // "incremental": true,                         /* 启用增量编译 */
-    "target": "es5", /* 指定 ECMAScript 目标版本: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', 或者 'ESNEXT'. */
+    "target": "es2022", /* 指定 ECMAScript 目标版本: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', 或者 'ESNEXT'. */
     "module": "commonjs", /* 指定使用模块: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', 或者 'ESNext'. */
     // "lib": [],                                   /* 指定要包含在编译中的库文件 */
     // "allowJs": true,                             /* 允许编译 javascript 文件 */
@@ -11,17 +11,17 @@
     // "jsx": "preserve",                           /* 指定 jsx 代码的生成: 'preserve', 'react-native', 'react', 'react-jsx' 或者 'react-jsxdev'. */
     // "declaration": true,                         /* 生成相应的 '.d.ts' 文件 */
     // "declarationMap": true,                      /* 对每个 '.d.ts' 文件进行遍历 */
-    // "sourceMap": true,                           /* 生成相应的 '.map' 文件 */
+    "sourceMap": false, /* 生成相应的 '.map' 文件 */
     // "outFile": "./",                             /* 将输出文件合并为一个文件 */
     "outDir": "./dist", /* 指定输出目录 */
-    // "rootDir": "./",                             /* 用来控制输出目录结构 --outDir */
+    "rootDir": "./", /* 用来控制输出目录结构 --outDir */
     // "composite": true,                           /* 启用项目编译 */
     // "tsBuildInfoFile": "./",                     /* 指定文件来存储增量编译信息 */
-    "removeComments": true, /* 删除编译后的所有的注释 */
+    "removeComments": false, /* 删除编译后的所有的注释 */
     // "noEmit": true,                              /* 不生成输出文件 */
     // "importHelpers": true,                       /* 从 tslib 导入辅助工具函数 */
     // "downlevelIteration": true,                  /* 在 ES5 和 ES3 中全面支持 for-of */
-    // "isolatedModules": true,                     /* 将每个文件作为单独的模块 （与 'ts.transpileModule' 类似） */
+    "isolatedModules": true, /* 将每个文件作为单独的模块 （与 'ts.transpileModule' 类似） */
     /* 严格的类型检查选项 */
     "strict": true, /* 启用所有严格类型检查选项 */
     // "noImplicitAny": true,                       /* 在表达式和声明上有隐含的 any 类型时报错 */
@@ -39,13 +39,13 @@
     // "noUncheckedIndexedAccess": true,            /* 在索引签名结果中包含 undefined */
     // "noPropertyAccessFromIndexSignature": true,  /* 需要索引签名中未声明的属性才能使用元素访问 */
     /* Module Resolution Options */
-    // "moduleResolution": "node",                  /* 选择模块解析策略： 'node' (Node.js) or 'classic' (TypeScript pre-1.6) */
-    // "baseUrl": "./",                             /* 用于解析非相对模块名称的基目录 */
+    "moduleResolution": "node", /* 选择模块解析策略： 'node' (Node.js) or 'classic' (TypeScript pre-1.6) */
+    "baseUrl": "./", /* 用于解析非相对模块名称的基目录 */
     // "paths": {},                                 /* 模块名到基于 baseUrl 的路径映射的列表 */
     // "rootDirs": [],                              /* 根文件夹列表，其组合内容表示项目运行时的结构内容 */
     // "typeRoots": [],                             /* 包含类型声明的文件列表 */
     // "types": [],                                 /* 需要包含的类型声明文件名列表 */
-    // "allowSyntheticDefaultImports": true,        /* 允许从没有设置默认导出的模块中默认导入 */
+    "allowSyntheticDefaultImports": true, /* 允许从没有设置默认导出的模块中默认导入 */
     "esModuleInterop": true, /* 通过为所有导入创建名称空间对象，启用 CommonJS 和 ES 模块之间的的互动性 */
     // "preserveSymlinks": true,                    /* 不解析符号链接的真实路径 */
     // "allowUmdGlobalAccess": true,                /* 允许从模块访问 UMD 全局变量 */

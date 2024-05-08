@@ -32,8 +32,9 @@ export async function run(options: CliRunOptions = {}) {
   let result: PromtResult = {
     lints,
     uncommittedConfirmed: false,
+    organizeConfigConfirmed: true,
+    clearCacheConfirmed: true,
     vscodeConfirmed: true,
-    ignoreFileConfirmed: false,
   }
 
   if (!argSkipPrompt) {
@@ -58,15 +59,32 @@ export async function run(options: CliRunOptions = {}) {
         })
       },
 
-      ignoreFileConfirmed: () => p.confirm({
-        initialValue: false,
-        message: '是否需要创建 .ignore 文件？',
+      organizeConfigConfirmed: () => p.confirm({
+        initialValue: true,
+        message: '是否将配置文件移动到 .lint 文件夹，进行统一管理？',
       }),
 
-      vscodeConfirmed: () => p.confirm({
-        initialValue: true,
-        message: '替换 .vscode/settings.json 以获得更好的开发体验！',
-      }),
+      clearCacheConfirmed: ({ results }) => {
+        // 修改了默认配置文件目录，才需要询问
+        if (!results.organizeConfigConfirmed) {
+          return Promise.resolve(false)
+        }
+        return p.confirm({
+          initialValue: false,
+          message: '是否清除旧的配置文件？',
+        })
+      },
+
+      vscodeConfirmed: ({ results }) => {
+        // 修改了默认配置文件目录，需要修改vscode配置
+        if (results.organizeConfigConfirmed) {
+          return Promise.resolve(true)
+        }
+        return p.confirm({
+          initialValue: true,
+          message: '替换 .vscode/settings.json 以获得更好的开发体验！',
+        })
+      },
     }, {
       onCancel: () => {
         p.cancel('任务取消！')
