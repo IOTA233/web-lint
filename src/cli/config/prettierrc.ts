@@ -1,4 +1,4 @@
-export const prettierConfigContent = `
+export const prettierConfig = `
 module.exports = {
   // 一行最多字符
   printWidth: 100,

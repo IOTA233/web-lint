@@ -1,4 +1,4 @@
-export const eslintConfigContent = `const { defineConfig } = require('eslint-define-config')
+export const eslintConfig = `const { defineConfig } = require('eslint-define-config')
 
 module.exports = defineConfig({
   // 指定此配置为根级配置，eslint 不会继续向上层寻找

@@ -10,34 +10,65 @@ import { configsMap } from '../constants'
 
 import type { PromtResult } from '../types'
 
-export async function updateLintFiles({ lints, organizeConfigConfirmed }: PromtResult) {
-  let cwd = process.cwd()
+export async function updateLintFiles({ tools, configDir, clearCacheConfirmed }: PromtResult) {
+  const originPath = process.cwd()
+  let finalPath = process.cwd()
   const files: Array<string> = []
-  if (organizeConfigConfirmed) {
-    cwd = path.join(cwd, '.lint')
-    await fsp.mkdir(cwd, { recursive: true })
+  if (configDir) {
+    finalPath = path.join(originPath, configDir)
+    await fsp.mkdir(finalPath, { recursive: true })
   }
-  for (const lint of lints) {
-    const item = configsMap[lint]
+  for (const tool of tools) {
+    const item = configsMap[tool]
     if (item) {
-      for (const { config, file, type } of item as any) {
-        const configFile = path.join(cwd, file)
-        const originFile = path.join(process.cwd(), file)
-        let res = config
-        if (type === 'ignoreFile' && fs.existsSync(originFile)) {
-          const content = await fsp.readFile(originFile, 'utf-8')
-          const oldPatterns = parse(content).patterns
-          const newPatterns = parse(config).patterns
-          const merge = [...new Set(oldPatterns.concat(newPatterns))]
-          res = merge.join('\n')
+      for (const {
+        config, file, type, unSupportChangePath, relateFiles,
+      } of item as any) {
+        const analyse = typeof config === 'function' ? config(configDir) : config
+        const configFile = path.join(finalPath, file)
+        const originFile = path.join(originPath, file)
+        let res = analyse
+        // 如果存在旧的ignore配置，合并
+        if (type === 'ignoreFile') {
+          if (fs.existsSync(originFile)) {
+            res = await mergePatterns(originFile, analyse)
+          } else if (fs.existsSync(configFile)) {
+            res = await mergePatterns(configFile, analyse)
+          }
         }
-        await fsp.writeFile(configFile, res)
+
+        // 删除所有相关的配置文件
+        if (clearCacheConfirmed) {
+          if (relateFiles?.length) {
+            relateFiles.forEach(async (fileName: string) => {
+              const temp = path.join(originPath, fileName)
+              if (fs.existsSync(temp)) {
+                await fsp.unlink(temp)
+              }
+            })
+          }
+        }
+
+        // todo stylelintignore 暂不支持自定义文件目录
+        if (unSupportChangePath) {
+          await fsp.writeFile(originFile, res)
+        } else {
+          await fsp.writeFile(configFile, res)
+        }
         files.push(file)
       }
     }
   }
   if (files.length) {
     p.log.success(c.cyan('创建配置文件'))
-    p.note(`${c.dim(files.join('\n'))}`, 'Added files')
+    p.note(`${c.dim(files.join('\n'))}`, configDir)
   }
+}
+
+async function mergePatterns(originFile: string, config: string) {
+  const content = await fsp.readFile(originFile, 'utf-8')
+  const oldPatterns = parse(content).patterns
+  const newPatterns = parse(config).patterns
+  const mergedPatterns = [...new Set([...oldPatterns, ...newPatterns])]
+  return mergedPatterns.join('\n')
 }

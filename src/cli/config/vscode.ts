@@ -1,6 +1,7 @@
-export const vscodeContent = `{
+export function vscodeConfig(dir: string) {
+  return `{
   "typescript.tsdk": "node_modules/typescript/lib",
-
+  ${getLintConfig(dir)}
   // 关闭 IDE 自带的样式验证
   "css.validate": false,
   "less.validate": false,
@@ -49,7 +50,7 @@ export const vscodeContent = `{
   },
 
   // 行尾默认为 LF 换行符而非 CRLF
-  "files.eol": "\n",
+  "files.eol": "\\n",
 
   // 键入 Tab 时插入空格而非 \t
   "editor.insertSpaces": true,
@@ -62,3 +63,17 @@ export const vscodeContent = `{
 }
 
 `
+}
+
+function getLintConfig(dir: string) {
+  if (dir) {
+    return `"eslint.options": {
+      "overrideConfigFile": "${dir}.eslintrc.js",
+      "ignorePath": "${dir}.eslintignore"
+    },
+    "stylelint.configFile": "${dir}.stylelintrc.json",
+    "prettier.configPath": "${dir}.prettierrc.js",
+    "prettier.ignorePath": "${dir}.prettierignore",`
+  }
+  return ''
+}

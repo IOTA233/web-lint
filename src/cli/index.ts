@@ -32,7 +32,7 @@ const instance = yargs(hideBin(process.argv))
       try {
         await run(args)
       } catch (error) {
-        p.log.error(c.inverse(c.red(' Failed to migrate ')))
+        p.log.error(c.inverse(c.red(' 安装失败！ ')))
         p.log.error(c.red(`✘ ${String(error)}`))
         process.exit(1)
       }

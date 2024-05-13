@@ -4,15 +4,16 @@ import * as p from '@clack/prompts'
 
 import { detectPackageManager } from '@antfu/install-pkg'
 import {
-  lintOptions, lints,
+  toolOptions, tools, pathOptions,
 } from './constants'
 import { isGitClean } from './utils'
 import type {
-  LintOption, PromItem, PromtResult,
+  ToolOption, PromItem, PromtResult,
 } from './types'
 import { updatePackageJson } from './stages/update-package-json'
 import { updateLintFiles } from './stages/update-lint-files'
 import { updateVscodeSettings } from './stages/update-vscode-settings'
+import { updateProjectSettings } from './stages/update-project-settings'
 
 export interface CliRunOptions {
   /**
@@ -22,7 +23,7 @@ export interface CliRunOptions {
   /**
    * Use the framework template for optimal customization: vue / react / svelte / astro
    */
-  lints?: string[]
+  tools?: string[]
 }
 
 export async function run(options: CliRunOptions = {}) {
@@ -30,9 +31,10 @@ export async function run(options: CliRunOptions = {}) {
 
   // 如果指令为默认安装，则按照以下默认配置进行安装
   let result: PromtResult = {
-    lints,
+    tools,
     uncommittedConfirmed: false,
-    organizeConfigConfirmed: true,
+    configDirConfirmed: 'yes',
+    configDir: 'lint-config',
     clearCacheConfirmed: true,
     vscodeConfirmed: true,
   }
@@ -47,26 +49,49 @@ export async function run(options: CliRunOptions = {}) {
           message: '监测到尚未提交的代码，是否确认继续执行？',
         })
       },
-      lints: () => {
+      tools: ({ results }) => {
+        if (!results.uncommittedConfirmed) {
+          process.exit(1)
+        }
         const message =
           '选择需要安装的lint工具:'
 
-        return p.multiselect<PromItem<LintOption>[], LintOption>({
+        return p.multiselect<PromItem<ToolOption>[], ToolOption>({
           message: c.reset(message),
-          options: lintOptions,
-          initialValues: lints,
+          options: toolOptions,
+          initialValues: tools,
           required: true,
         })
       },
 
-      organizeConfigConfirmed: () => p.confirm({
-        initialValue: true,
-        message: '是否将配置文件移动到 .lint 文件夹，进行统一管理？',
+      configDirConfirmed: () => p.select<PromItem<string>[], string>({
+        options: pathOptions,
+        maxItems: 1,
+        initialValue: 'no',
+        message: '是否将所有配置文件进行统一管理？',
       }),
+
+      configDir: ({ results }) => {
+        switch (results.configDirConfirmed) {
+          case 'no':
+            return Promise.resolve('')
+          case 'yes':
+            return Promise.resolve('lint-config')
+          case 'custom':
+            return p.text({
+              message: '请输入文件夹名称',
+              placeholder: 'lint-config',
+              defaultValue: 'lint-config',
+              initialValue: '',
+            })
+          default:
+            return Promise.resolve('')
+        }
+      },
 
       clearCacheConfirmed: ({ results }) => {
         // 修改了默认配置文件目录，才需要询问
-        if (!results.organizeConfigConfirmed) {
+        if (results.configDirConfirmed === 'no') {
           return Promise.resolve(false)
         }
         return p.confirm({
@@ -76,8 +101,8 @@ export async function run(options: CliRunOptions = {}) {
       },
 
       vscodeConfirmed: ({ results }) => {
-        // 修改了默认配置文件目录，需要修改vscode配置
-        if (results.organizeConfigConfirmed) {
+        // 修改了默认配置文件目录，必须修改vscode配置
+        if (results.configDirConfirmed !== 'no') {
           return Promise.resolve(true)
         }
         return p.confirm({
@@ -94,9 +119,12 @@ export async function run(options: CliRunOptions = {}) {
 
     if (!result.uncommittedConfirmed) return process.exit(1)
   }
+  result.configDir = result.configDir ? `${result.configDir}/` : ''
+
   await updatePackageJson(result)
   await updateLintFiles(result)
   await updateVscodeSettings(result)
+  await updateProjectSettings(result)
 
   const manager = await detectPackageManager()
   p.log.success(c.green(`配置完成，执行 ${manager} run install 更新依赖包\n`))

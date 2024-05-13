@@ -1,4 +1,3 @@
-
 {
   "extends": [
     "@stylistic/stylelint-plugin",

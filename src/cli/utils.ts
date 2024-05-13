@@ -8,3 +8,12 @@ export function isGitClean() {
     return false
   }
 }
+
+export function resetHookPath() {
+  try {
+    execSync('git config core.hooksPath')
+    return 'git config core.hooksPath'
+  } catch (error) {
+    return ''
+  }
+}

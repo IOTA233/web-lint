@@ -1,0 +1,5 @@
+{
+    "pre-commit": "npx lint-staged -c lint-config/.lintstagedrc.js",
+    "commit-msg": "npx commitlint -g lint-config/.commitlintrc.js -e"
+  }
+  

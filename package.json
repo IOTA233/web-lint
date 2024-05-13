@@ -13,10 +13,12 @@
   ],
   "scripts": {
     "dev": "ts-node src/index.ts",
-    "build": "tsc",
+    "build": "tsup --format esm,cjs --clean --dts",
+    "prepack": "nr build",
+    "prepare": "simple-git-hooks lint-config/.simple-git-hooks.json",
     "clear": "rimraf pnpm-lock.yarm & rimraf node_modules & rimraf .eslintrc.js & rimraf .eslintignore & rimraf .stylelintrc.json & rimraf .stylelintignore & rimraf .prettierrc.js & rimraf .prettierignore & rimraf .commitlintrc.js & rimraf .lintstagedrc.js & rimraf .husky & rimraf .vscode/settings.json & rimraf pnpm-lock.yaml",
-    "lint:style": "stylelint --fix ./**/*.{css,scss,vue,html}",
-    "lint:script": "eslint --ext .js,.jsx,.ts,.tsx,.vue --fix ./"
+    "lint:style": "stylelint --fix ./**/*.{css,scss,vue,html} -c lint-config/.stylelintrc.json",
+    "lint:script": "eslint --ext .js,.jsx,.ts,.tsx,.vue --fix ./ -c lint-config/.eslintrc.js --ignore-path lint-config/.eslintignore"
   },
   "bin": {
     "web-lint": "./dist/src/index.js"
@@ -29,16 +31,17 @@
     "@types/node": "^20.12.7",
     "@types/prompts": "^2.4.9",
     "@types/yargs": "^17.0.32",
-    "@typescript-eslint/eslint-plugin": "^7.6.0",
-    "@typescript-eslint/parser": "^7.6.0",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "@vitejs/plugin-vue": "^5.0.4",
     "bumpp": "^9.4.0",
     "bundle-require": "^4.0.3",
-    "eslint": "^8.0.0",
+    "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^18.0.0",
     "eslint-define-config": "^2.1.0",
     "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-vue": "^9.24.1",
+    "eslint-plugin-vue": "^9.26.0",
     "esno": "^4.7.0",
     "lint-staged": "^15.2.2",
     "parse-gitignore": "^2.0.0",

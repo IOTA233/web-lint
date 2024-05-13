@@ -5,7 +5,7 @@ import process from 'node:process'
 import c from 'picocolors'
 import * as p from '@clack/prompts'
 
-import { vscodeSettingsString } from '../constants'
+import { vscodeConfig } from '../config/vscode'
 import type { PromtResult } from '../types'
 
 export async function updateVscodeSettings(result: PromtResult) {
@@ -17,18 +17,7 @@ export async function updateVscodeSettings(result: PromtResult) {
 
     if (!fs.existsSync(dotVscodePath)) await fsp.mkdir(dotVscodePath, { recursive: true })
 
-    if (!fs.existsSync(settingsPath)) {
-      await fsp.writeFile(settingsPath, `{${vscodeSettingsString}}\n`, 'utf-8')
-      p.log.success(c.green('创建 .vscode/settings.json'))
-    } else {
-      let settingsContent = await fsp.readFile(settingsPath, 'utf8')
-
-      settingsContent = settingsContent.trim().replace(/\s*}$/, '')
-      settingsContent += settingsContent.endsWith(',') || settingsContent.endsWith('{') ? '' : ','
-      settingsContent += `${vscodeSettingsString}}\n`
-
-      await fsp.writeFile(settingsPath, settingsContent, 'utf-8')
-      p.log.success(c.green('更新 .vscode/settings.json'))
-    }
+    await fsp.writeFile(settingsPath, `${vscodeConfig(result.configDir)}`, 'utf-8')
+    p.log.success(c.green('更新 .vscode/settings.json'))
   }
 }

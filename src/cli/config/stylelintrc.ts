@@ -1,4 +1,4 @@
-export const stylelintConfigContent = `
+export const stylelintConfig = `
 {
   "extends": [
     "@stylistic/stylelint-plugin",

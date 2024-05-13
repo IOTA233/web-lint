@@ -21,19 +21,18 @@ export async function updatePackageJson(result: PromtResult) {
 
   const addedScripts: string[] = []
   const addedPackages: string[] = []
-  for (const lint of result.lints) {
-    const script = scriptsMap[lint]
+  for (const tool of result.tools) {
+    const script = scriptsMap[tool]
     if (script) {
-      script.forEach((f: { [key: string]: any }) => {
-        for (const key in f) {
-          if (Object.prototype.hasOwnProperty.call(f, key)) {
-            pkg.scripts[key] = f[key]
-            addedScripts.push(`${key}: ${f[key]}`)
-          }
+      const obj = script(result.configDir) as any
+      for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          pkg.scripts[key] = obj[key]
+          addedScripts.push(`${key}: ${obj[key]}`)
         }
-      })
+      }
     }
-    const deps = dependenciesMap[lint]
+    const deps = dependenciesMap[tool]
     if (deps) {
       deps.forEach((f) => {
         pkg.devDependencies[f] = pkgJson.devDependencies[f]
@@ -43,10 +42,10 @@ export async function updatePackageJson(result: PromtResult) {
   }
 
   if (addedScripts.length) {
-    p.note(`${c.dim(addedScripts.join('\n'))}`, 'Added scripts')
+    p.note(`${c.dim(addedScripts.join('\n'))}`, 'scripts')
   }
   if (addedPackages.length) {
-    p.note(`${c.dim(addedPackages.join('\n'))}`, 'Added packages')
+    p.note(`${c.dim(addedPackages.join('\n'))}`, 'devDependencies')
   }
 
   await fsp.writeFile(pathPackageJSON, JSON.stringify(pkg, null, 2))
